@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>poTATo的阳间工具库！</title>
+    <title>poTATo的工具库！</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -71,10 +71,92 @@
             outline: none;
             border-color: #000;
         }
+        .password-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        .password-container.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .password-form {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+        .password-container.hidden .password-form {
+            transform: scale(0.8);
+        }
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+        .password-input:focus {
+            outline: none;
+            border-color: #000;
+        }
+        .password-button {
+            padding: 12px 30px;
+            background-color: #000;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .password-button:hover {
+            background-color: #000;
+            color: white;
+        }
+        .password-error {
+            color: red;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        #toolContainer {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        #toolContainer.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- 密码输入容器 -->
+    <div class="password-container" id="passwordContainer">
+        <div class="password-form">
+            <h2>请输入工具库密码</h2>
+            <input type="password" id="passwordInput" placeholder="密码" class="password-input">
+            <button class="password-button" onclick="checkPassword()">确认</button>
+            <div class="password-error" id="passwordError"></div>
+        </div>
+    </div>
+
+    <div class="container" id="toolContainer" style="display: none;">
         <h1>工具库</h1>
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="搜索文件..." class="search-input">
@@ -93,7 +175,11 @@
             "unicode_converter5.0.0.zip",
             "FS2.zip",
             "burglar.zip",
-            "tk1.exe"
+            "tk1.exe",
+            "BLUE.zip",
+            "Hsha.exe",
+            "ZIP_PASSWORD.zip",
+            "Jsq.zip"
             // 添加其他文件
         ];
 
@@ -134,14 +220,51 @@
             });
         }
 
-        // 页面加载时生成文件列表和设置搜索
+        // 密码验证函数（使用直接比较，确保功能正常）
+        function checkPassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const passwordError = document.getElementById('passwordError');
+            const passwordContainer = document.getElementById('passwordContainer');
+            const toolContainer = document.getElementById('toolContainer');
+
+            // 正确密码
+            const correctPassword = "12321abcba";
+
+            if (passwordInput.value === correctPassword) {
+                // 密码正确，显示工具库（带动画）
+                passwordContainer.classList.add('hidden');
+                setTimeout(() => {
+                    toolContainer.style.display = 'block';
+                    setTimeout(() => {
+                        toolContainer.classList.add('visible');
+                    }, 100);
+                }, 500);
+                generateFileList();
+                setupSearch();
+            } else {
+                // 密码错误，显示错误信息
+                passwordError.textContent = '密码错误，请重新输入';
+                passwordInput.value = '';
+            }
+        }
+
+        // 按下回车键也可以验证密码
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // 页面加载时只显示密码输入界面
         window.onload = function() {
-            generateFileList();
-            setupSearch();
+            // 工具库容器默认隐藏
+            document.getElementById('toolContainer').style.display = 'none';
         };
     </script>
     <footer style="text-align: center; margin-top: 20px; color: #999; font-size: 14px;">
-        作者：poTATo
+        <h3>作者：poTATo</h3>
+        <h3>开发语言：html</h3>
+        <h3>开发环境：github</h3>
     </footer>
 </body>
 </html>
