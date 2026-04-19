@@ -3,274 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>poTATo's Tools</title>
+    <title>poTATo的阳间工具库！</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
             margin: 0;
             padding: 20px;
         }
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             background-color: white;
-            padding: 30px;
-            border-radius: 10px;
+            padding: 20px;
+            border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
             text-align: center;
-            color: #333;
-            margin-bottom: 30px;
+            color: #000;
         }
-        .mode-toggle {
-            text-align: center;
-            margin-bottom: 20px;
+        .file-list {
+            margin-top: 20px;
         }
-        .mode-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            margin: 0 5px;
-            transition: background-color 0.3s;
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
         }
-        .mode-button.active {
-            background-color: #45a049;
+        .file-item:hover {
+            background-color: #f0f0f0;
         }
-        .input-section {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
+        .file-name {
             font-weight: bold;
+            color: #000;
         }
-        textarea {
+        .download-link {
+            text-decoration: none;
+            color: #000;
+            padding: 5px 10px;
+            border: 1px solid #000;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .download-link:hover {
+            background-color: #000;
+            color: white;
+        }
+        .no-files {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+        .search-container {
+            margin-bottom: 20px;
+        }
+        .search-input {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 5px;
-            resize: vertical;
-            min-height: 100px;
+            border-radius: 4px;
             font-size: 16px;
         }
-        .button-section {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .translate-button {
-            padding: 12px 30px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #008CBA;
-            color: white;
-            transition: background-color 0.3s;
-        }
-        .translate-button:hover {
-            background-color: #007bb5;
-        }
-        .result-section {
-            margin-top: 20px;
-        }
-        .result-box {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            min-height: 100px;
-            font-size: 16px;
-            white-space: pre-wrap;
-        }
-        .instructions {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-        }
-        .instructions h3 {
-            margin-top: 0;
-        }
-        .instructions ul {
-            padding-left: 20px;
+        .search-input:focus {
+            outline: none;
+            border-color: #000;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>八卦字符翻译器</h1>
-        
-        <div class="mode-toggle">
-            <button class="mode-button active" id="encrypt-mode">转八卦字符</button>
-            <button class="mode-button" id="decrypt-mode">还原回英文</button>
+        <h1>工具库</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="搜索文件..." class="search-input">
         </div>
-        
-        <div class="input-section">
-            <label for="input-text">输入文本：</label>
-            <textarea id="input-text" placeholder="请输入要转换的文本..."></textarea>
-        </div>
-        
-        <div class="button-section">
-            <button class="translate-button" id="translate-button">转换！</button>
-        </div>
-        
-        <div class="result-section">
-            <label for="result-text">结果：</label>
-            <div class="result-box" id="result-text"></div>
-        </div>
-        
-        <div class="instructions">
-            <h3>使用说明：</h3>
-            <ul>
-                <li><strong>转八卦字符</strong>：将英文文本转换为八卦字符</li>
-                <li><strong>还原回英文</strong>：将八卦字符转换回英文文本</li>
-                <li>支持小写字母、大写字母、数字和连字符号</li>
-                <li>其他字符会保持不变</li>
-                <li>作者：poTATo</li>
-            </ul>
+        <div class="file-list" id="fileList">
+            <!-- 文件列表将通过 JavaScript 动态生成 -->
         </div>
     </div>
-    
+
     <script>
-        // 定义八卦符映射（0-7）
-        const baguaSymbols = ['☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷'];
-        
-        // 定义字母排序映射
-        const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-        const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        
-        // 当前模式：true为翻译模式，false为原始模式
-        let translateMode = true;
-        
-        // 翻译模式切换
-        document.getElementById('encrypt-mode').addEventListener('click', function() {
-            translateMode = true;
-            document.getElementById('encrypt-mode').classList.add('active');
-            document.getElementById('decrypt-mode').classList.remove('active');
-        });
-        
-        document.getElementById('decrypt-mode').addEventListener('click', function() {
-            translateMode = false;
-            document.getElementById('decrypt-mode').classList.add('active');
-            document.getElementById('encrypt-mode').classList.remove('active');
-        });
-        
-        // 翻译按钮点击事件
-        document.getElementById('translate-button').addEventListener('click', function() {
-            const inputText = document.getElementById('input-text').value;
-            let result;
+        // GitHub 仓库信息
+        const githubRepo = "https://raw.githubusercontent.com/poTATo-nb/poTATo-nb.github.io/main/";
+
+        // 文件列表
+        const files = [
+            "BLUE.zip",
+            "FS2.zip",
+            "burglar.zip"
+            // 添加其他文件
+        ];
+
+        // 生成文件列表
+        function generateFileList(filter = '') {
+            const fileList = document.getElementById('fileList');
             
-            if (translateMode) {
-                result = translateToBagua(inputText);
-            } else {
-                result = translateFromBagua(inputText);
+            // 过滤文件
+            const filteredFiles = files.filter(file => 
+                file.toLowerCase().includes(filter.toLowerCase())
+            );
+            
+            if (filteredFiles.length === 0) {
+                fileList.innerHTML = '<div class="no-files">没有找到文件</div>';
+                return;
             }
+
+            let html = '';
+            filteredFiles.forEach(file => {
+                // 生成 GitHub 下载链接
+                const downloadUrl = githubRepo + file;
+                html += `
+                    <div class="file-item">
+                        <span class="file-name">${file}</span>
+                        <a href="${downloadUrl}" class="download-link" download>下载</a>
+                    </div>
+                `;
+            });
             
-            document.getElementById('result-text').textContent = result;
-        });
-        
-        // 翻译为八卦字符
-        function translateToBagua(text) {
-            const result = [];
-            
-            for (const char of text) {
-                if (lowercase.includes(char)) {
-                    // 小写字母：9+字母排序
-                    const num = 9 + lowercase.indexOf(char) + 1;
-                    processNumber(num, result);
-                } else if (uppercase.includes(char)) {
-                    // 大写字母：35+字母排序
-                    const num = 35 + uppercase.indexOf(char) + 1;
-                    processNumber(num, result);
-                } else if (char === '-') {
-                    // 连字符号：63
-                    processNumber(63, result);
-                } else if (!isNaN(char) && char !== ' ') {
-                    // 数字：保持不变
-                    processNumber(parseInt(char), result);
-                } else {
-                    // 其他字符：保留
-                    result.push(char);
-                }
-            }
-            
-            return result.join('');
+            fileList.innerHTML = html;
         }
-        
-        // 处理数字转换
-        function processNumber(num, result) {
-            // 转换为两位数八进制
-            const octal = num.toString(8).padStart(2, '0');
-            
-            // 将每个八进制数字转换为八卦符
-            const baguaChars = [];
-            for (const digit of octal) {
-                const digitNum = parseInt(digit);
-                baguaChars.push(baguaSymbols[digitNum]);
-            }
-            
-            // 拼接两个八卦符
-            result.push(baguaChars.join(''));
+
+        // 绑定搜索事件
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                generateFileList(this.value);
+            });
         }
-        
-        // 从八卦字符翻译回原文
-        function translateFromBagua(text) {
-            const result = [];
-            let i = 0;
-            
-            while (i < text.length) {
-                // 检查是否是八卦符
-                if (i + 1 < text.length && 
-                    baguaSymbols.includes(text[i]) && 
-                    baguaSymbols.includes(text[i+1])) {
-                    
-                    // 获取两个八卦符
-                    const symbol1 = text[i];
-                    const symbol2 = text[i+1];
-                    
-                    // 转换为八进制数字
-                    const digit1 = baguaSymbols.indexOf(symbol1);
-                    const digit2 = baguaSymbols.indexOf(symbol2);
-                    const octal = `${digit1}${digit2}`;
-                    
-                    // 转换为十进制
-                    const num = parseInt(octal, 8);
-                    
-                    // 转换为原始字符
-                    let char;
-                    if (num >= 10 && num <= 35) {
-                        // 小写字母
-                        char = lowercase[num - 10];
-                    } else if (num >= 36 && num <= 61) {
-                        // 大写字母
-                        char = uppercase[num - 36];
-                    } else if (num === 63) {
-                        // 连字符号
-                        char = '-';
-                    } else if (num >= 0 && num <= 9) {
-                        // 数字
-                        char = num.toString();
-                    } else {
-                        // 无法识别的数字，保留原始符号
-                        char = `${symbol1}${symbol2}`;
-                    }
-                    
-                    result.push(char);
-                    i += 2;
-                } else {
-                    // 不是八卦符，保留原始字符
-                    result.push(text[i]);
-                    i += 1;
-                }
-            }
-            
-            return result.join('');
-        }
+
+        // 页面加载时生成文件列表和设置搜索
+        window.onload = function() {
+            generateFileList();
+            setupSearch();
+        };
     </script>
 </body>
 </html>
