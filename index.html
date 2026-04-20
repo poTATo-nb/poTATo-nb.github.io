@@ -8,6 +8,10 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f8f8;
+            background-image: url('https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=abstract%20technology%20background%20black%20and%20white%20monochrome&image_size=landscape_16_9');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             margin: 0;
             padding: 20px;
         }
@@ -117,9 +121,9 @@
         }
         .password-button {
             padding: 12px 30px;
-            background-color: #000;
-            color: white;
-            border: none;
+            background-color: white;
+            color: #000;
+            border: 1px solid #000;
             border-radius: 4px;
             font-size: 16px;
             cursor: pointer;
@@ -143,6 +147,75 @@
             opacity: 1;
             transform: translateY(0);
         }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .modal.visible .modal-content {
+            transform: scale(1);
+        }
+        .modal h3 {
+            margin-top: 0;
+            color: #000;
+        }
+        .modal p {
+            margin: 10px 0;
+            color: #666;
+        }
+        .modal-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: white;
+            color: #000;
+            border: 1px solid #000;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .modal-button:hover {
+            background-color: #000;
+            color: white;
+        }
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        .close-button:hover {
+            color: #000;
+        }
     </style>
 </head>
 <body>
@@ -163,6 +236,16 @@
         </div>
         <div class="file-list" id="fileList">
             <!-- 文件列表将通过 JavaScript 动态生成 -->
+        </div>
+    </div>
+
+    <!-- 下载弹窗 -->
+    <div class="modal" id="downloadModal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h3 id="modalFileName">文件名</h3>
+            <p id="modalFileInfo">文件信息</p>
+            <a href="#" id="modalDownloadLink" class="modal-button" download>下载</a>
         </div>
     </div>
 
@@ -200,17 +283,53 @@
             let html = '';
             filteredFiles.forEach(file => {
                 // 生成 GitHub 下载链接
-                const downloadUrl = githubRepo + file;
+                let downloadUrl;
+                if (file === 'BLUE.zip') {
+                    // BLUE.zip 指向 GitHub Releases
+                    downloadUrl = 'https://github.com/poTATo-nb/poTATo-nb.github.io/releases/download/v1.0/BLUE.zip';
+                } else {
+                    downloadUrl = githubRepo + file;
+                }
                 html += `
                     <div class="file-item">
                         <span class="file-name">${file}</span>
-                        <a href="${downloadUrl}" class="download-link" download>下载</a>
+                        <button class="download-link" onclick="showDownloadModal('${file}', '${downloadUrl}')">下载</button>
                     </div>
                 `;
             });
             
             fileList.innerHTML = html;
         }
+
+        // 显示下载弹窗
+        function showDownloadModal(fileName, downloadUrl) {
+            const modal = document.getElementById('downloadModal');
+            const modalFileName = document.getElementById('modalFileName');
+            const modalFileInfo = document.getElementById('modalFileInfo');
+            const modalDownloadLink = document.getElementById('modalDownloadLink');
+            
+            // 设置弹窗内容
+            modalFileName.textContent = fileName;
+            modalFileInfo.textContent = '点击下方按钮开始下载此文件';
+            modalDownloadLink.href = downloadUrl;
+            
+            // 显示弹窗
+            modal.classList.add('visible');
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            const modal = document.getElementById('downloadModal');
+            modal.classList.remove('visible');
+        }
+
+        // 点击弹窗外部关闭弹窗
+        window.onclick = function(event) {
+            const modal = document.getElementById('downloadModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        };
 
         // 绑定搜索事件
         function setupSearch() {
@@ -228,7 +347,7 @@
             const toolContainer = document.getElementById('toolContainer');
 
             // 正确密码
-            const correctPassword = "12321abcba";
+            const correctPassword = "qwertyuiop";
 
             if (passwordInput.value === correctPassword) {
                 // 密码正确，显示工具库（带动画）
