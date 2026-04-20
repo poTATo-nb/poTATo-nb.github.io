@@ -7,25 +7,30 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
-            background-image: url('https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=abstract%20technology%20background%20black%20and%20white%20monochrome&image_size=landscape_16_9');
-            background-size: cover;
-            background-position: center;
+            background-color: #1a1a1a;
+            background-image: 
+                linear-gradient(45deg, #2a2a2a 25%, transparent 25%),
+                linear-gradient(-45deg, #2a2a2a 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #2a2a2a 75%),
+                linear-gradient(-45deg, transparent 75%, #2a2a2a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
             background-attachment: fixed;
             margin: 0;
             padding: 20px;
+            color: #ffffff;
         }
         .container {
             max-width: 800px;
             margin: 0 auto;
-            background-color: white;
+            background-color: #2a2a2a;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
         h1 {
             text-align: center;
-            color: #000;
+            color: #ffffff;
         }
         .file-list {
             margin-top: 20px;
@@ -35,30 +40,31 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #555555;
         }
         .file-item:hover {
-            background-color: #f0f0f0;
+            background-color: #3a3a3a;
         }
         .file-name {
             font-weight: bold;
-            color: #000;
+            color: #ffffff;
         }
         .download-link {
             text-decoration: none;
-            color: #000;
+            color: #ffffff;
             padding: 5px 10px;
-            border: 1px solid #000;
+            border: 1px solid #ffffff;
             border-radius: 4px;
+            background-color: #2a2a2a;
             transition: all 0.3s ease;
         }
         .download-link:hover {
-            background-color: #000;
-            color: white;
+            background-color: #ffffff;
+            color: #000;
         }
         .no-files {
             text-align: center;
-            color: #666;
+            color: #999999;
             padding: 20px;
         }
         .search-container {
@@ -67,13 +73,15 @@
         .search-input {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #555555;
             border-radius: 4px;
             font-size: 16px;
+            background-color: #3a3a3a;
+            color: #ffffff;
         }
         .search-input:focus {
             outline: none;
-            border-color: #000;
+            border-color: #ffffff;
         }
         .password-container {
             position: fixed;
@@ -94,15 +102,18 @@
             pointer-events: none;
         }
         .password-form {
-            background-color: white;
+            background-color: #2a2a2a;
             padding: 40px;
             border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             text-align: center;
             max-width: 400px;
             width: 90%;
             transform: scale(1);
             transition: transform 0.3s ease;
+        }
+        .password-form h2 {
+            color: #ffffff;
         }
         .password-container.hidden .password-form {
             transform: scale(0.8);
@@ -110,28 +121,30 @@
         .password-input {
             width: 100%;
             padding: 15px;
-            border: 1px solid #ddd;
+            border: 1px solid #555555;
             border-radius: 4px;
             font-size: 16px;
             margin: 20px 0;
+            background-color: #3a3a3a;
+            color: #ffffff;
         }
         .password-input:focus {
             outline: none;
-            border-color: #000;
+            border-color: #ffffff;
         }
         .password-button {
             padding: 12px 30px;
-            background-color: white;
-            color: #000;
-            border: 1px solid #000;
+            background-color: #3a3a3a;
+            color: #ffffff;
+            border: 1px solid #ffffff;
             border-radius: 4px;
             font-size: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
         .password-button:hover {
-            background-color: #000;
-            color: white;
+            background-color: #ffffff;
+            color: #000;
         }
         .password-error {
             color: red;
@@ -167,10 +180,10 @@
             pointer-events: auto;
         }
         .modal-content {
-            background-color: white;
+            background-color: #2a2a2a;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             text-align: center;
             max-width: 500px;
             width: 90%;
@@ -180,20 +193,32 @@
         .modal.visible .modal-content {
             transform: scale(1);
         }
+        /* 错误弹窗样式 */
+        #errorModal {
+            background-color: rgba(255, 68, 68, 0.4);
+        }
+        #errorModal .modal-content {
+            animation: shake 0.5s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) scale(1); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px) scale(1); }
+            20%, 40%, 60%, 80% { transform: translateX(5px) scale(1); }
+        }
         .modal h3 {
             margin-top: 0;
-            color: #000;
+            color: #ffffff;
         }
         .modal p {
             margin: 10px 0;
-            color: #666;
+            color: #999999;
         }
         .modal-button {
             margin-top: 20px;
             padding: 10px 20px;
-            background-color: white;
-            color: #000;
-            border: 1px solid #000;
+            background-color: #3a3a3a;
+            color: #ffffff;
+            border: 1px solid #ffffff;
             border-radius: 4px;
             font-size: 16px;
             cursor: pointer;
@@ -202,8 +227,8 @@
             display: inline-block;
         }
         .modal-button:hover {
-            background-color: #000;
-            color: white;
+            background-color: #ffffff;
+            color: #000;
         }
         .close-button {
             position: absolute;
@@ -211,10 +236,10 @@
             right: 20px;
             font-size: 24px;
             cursor: pointer;
-            color: #666;
+            color: #999999;
         }
         .close-button:hover {
-            color: #000;
+            color: #ffffff;
         }
     </style>
 </head>
@@ -246,6 +271,16 @@
             <h3 id="modalFileName">文件名</h3>
             <p id="modalFileInfo">文件信息</p>
             <a href="#" id="modalDownloadLink" class="modal-button" download>下载</a>
+        </div>
+    </div>
+
+    <!-- 错误弹窗 -->
+    <div class="modal" id="errorModal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeErrorModal()">&times;</span>
+            <h3 style="color: #ff4444ff;">错误</h3>
+            <p id="errorMessage">发生错误，请重试</p>
+            <button class="modal-button" onclick="closeErrorModal()">确定</button>
         </div>
     </div>
 
@@ -311,6 +346,25 @@
             // 设置弹窗内容
             modalFileName.textContent = fileName;
             modalFileInfo.textContent = '点击下方按钮开始下载此文件';
+            
+            // 添加下载事件处理
+            modalDownloadLink.onclick = function(e) {
+                e.preventDefault(); // 先阻止默认下载行为
+                
+                // 检查文件是否存在
+                fetch(downloadUrl, { method: 'HEAD' })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('文件无法访问');
+                        }
+                        // 文件存在，手动触发下载
+                        window.location.href = downloadUrl;
+                    })
+                    .catch(error => {
+                        showErrorModal('下载失败：' + error.message);
+                    });
+            };
+            
             modalDownloadLink.href = downloadUrl;
             
             // 显示弹窗
@@ -326,10 +380,27 @@
         // 点击弹窗外部关闭弹窗
         window.onclick = function(event) {
             const modal = document.getElementById('downloadModal');
+            const errorModal = document.getElementById('errorModal');
             if (event.target == modal) {
                 closeModal();
+            } else if (event.target == errorModal) {
+                closeErrorModal();
             }
         };
+
+        // 显示错误弹窗
+        function showErrorModal(message) {
+            const errorModal = document.getElementById('errorModal');
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorModal.classList.add('visible');
+        }
+
+        // 关闭错误弹窗
+        function closeErrorModal() {
+            const errorModal = document.getElementById('errorModal');
+            errorModal.classList.remove('visible');
+        }
 
         // 绑定搜索事件
         function setupSearch() {
@@ -363,7 +434,6 @@
             } else {
                 // 密码错误，显示错误信息
                 passwordError.textContent = '密码错误，请重新输入';
-                passwordInput.value = '';
             }
         }
 
@@ -380,10 +450,10 @@
             document.getElementById('toolContainer').style.display = 'none';
         };
     </script>
-    <footer style="text-align: center; margin-top: 20px; color: #999; font-size: 14px;">
-        <h3>作者：poTATo</h3>
-        <h3>开发语言：html</h3>
-        <h3>开发环境：github</h3>
+    <footer style="text-align: center; margin-top: 20px; color: #999999; font-size: 14px;">
+        <h3 style="color: #ffffff83;">作者：poTATo</h3>
+        <h3 style="color: #ffffff83;">开发语言：html</h3>
+        <h3 style="color: #ffffff83;">开发环境：GitHub</h3>
     </footer>
 </body>
 </html>
